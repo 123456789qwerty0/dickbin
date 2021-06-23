@@ -6,6 +6,7 @@ in-game pastebin that uses [psbdmp](https://psdbmp.ws) api to search pastebins
 * vesteria
 
 ## to-do
+- [ ] host a wrapper for the fucking pastebin api
 - [ ] make support to whitespace/specials characters
 - [ ] open the scripts in a editor instead of alr executing it
 - [x] run in mult threads

@@ -1,5 +1,5 @@
 print(pcall(function()
-local req = syn and syn.request
+local req = request (syn and syn.request)
 local function kick(v)
     game.Players.LocalPlayer:Kick((v and 'Max pastebin requests reached, cloudfare ate ur ass')or'Only synapse bitch')
 end

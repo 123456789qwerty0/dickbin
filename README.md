@@ -7,6 +7,11 @@ in-game pastebin that uses [psbdmp](https://psdbmp.ws) to search pastebins
 - [x] run in mult threads (spawn func)
 - [x] very very beta so fuck u if it doesnt work well
 
-## tested words
+## tested-words
 * jailbreak
 * vesteria
+
+## script-loadstring
+```lua
+loadstring(game:HttpGet('https://raw.githubusercontent.com/loglizzy/dickbin/main/main.lua'))()
+```

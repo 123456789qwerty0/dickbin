@@ -219,6 +219,12 @@ local function logpaste()
     return TextButton
 end
 
+local function limitreached()
+    a = Instance.new('TextLabel',ScreenGui)
+    a.Size = UDim2.new(1,0,0,16)
+    a.Text = '500 requests limit reached, wait 1 minute and then you can search again'
+end
+
 local function getviews(raw)
     local f1,f2 = string.find(raw,'<div class="visits" title="Unique visits to this paste">')
     raw = string.sub(raw,f2+1,#raw)
@@ -260,15 +266,29 @@ local function comlog(v)
     if not f then a:Remove() end
 end
 
+local amt = 0
 local function search(v)
     local sts,res = pcall(game.HttpGet,game,'https://psbdmp.ws/api/v3/search/'..v)
     if sts then
         for i,v in pairs(http:JSONDecode(res).data) do
-            local f,e = pcall(comlog,v)
+            spawn(function()
+                comlog(v)
+                amt = amt + 1
+                if amt >= 250 then
+                    limitreached()
+                end
+            end)
         end
     end
 end
 
 ImageButton.MouseButton1Click:Connect(function()
-    search(string.sub(TextBox.Text,4,#TextBox.Text))
+    for i,v in pairs(ScrollingFrame:GetChildren()) do
+        if v:IsA('TextButton') then
+            v:Remove()
+        end
+    end
+    
+    local t = string.sub(TextBox.Text,4,#TextBox.Text)
+    search(t)
 end)

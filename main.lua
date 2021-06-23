@@ -1,5 +1,22 @@
+print(pcall(function()
+local req = syn and syn.request
+local function kick(v)
+    game.Players.LocalPlayer:Kick((v and 'Max pastebin requests reached, cloudfare ate ur ass')or'Only synapse bitch')
+end
+
+local head = {
+    ['Referer']= 'https://pastebin.com/',
+    ['sec-ch-ua']= "Microsoft Edge",
+    ['User-Agent']= 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36 Edg/91.0.864.48'
+}
+
+if not req then kick() return end
+local f,e = pcall(req,{Method='GET',Headers=head,Url='https://pastebin.com/raw/4B8iSyiU'})
+if not f then kick(1) end
+if string.find(e.Body,'captcha') then kick(1) end
+
 local ScreenGui = Instance.new("ScreenGui")
-if syn then syn.protect_gui(ScreenGui) end
+syn.protect_gui(ScreenGui)
 ScreenGui.Parent = game.CoreGui
 
 local Frame = Instance.new("Frame")
@@ -181,7 +198,7 @@ local function logpaste()
     local TextLabel_3 = Instance.new("TextLabel")
     local TextLabel_4 = Instance.new("TextLabel")
     local TextLabel_5 = Instance.new("TextLabel")
-    local visibility = Instance.new("ImageButton")
+    local visibility = Instance.new("ImageLabel")
     
     TextButton.Parent = ScrollingFrame
     TextButton.BackgroundColor3 = Color3.fromRGB(107, 107, 107)
@@ -255,15 +272,10 @@ local function logpaste()
     visibility.Image = "rbxassetid://3926307971"
     visibility.ImageRectOffset = Vector2.new(84, 44)
     visibility.ImageRectSize = Vector2.new(36, 36)
+    visibility.Visible = false
     
     ScrollingFrame.CanvasSize = UDim2.new(0,0,0,UIListLayout.AbsoluteContentSize.Y)
     return TextButton
-end
-
-local function limitreached()
-    a = Instance.new('TextLabel',ScreenGui)
-    a.Size = UDim2.new(1,0,0,16)
-    a.Text = '500 requests limit reached, wait 1 minute and then you can search again'
 end
 
 local function getviews(raw)
@@ -278,7 +290,7 @@ end
 local function getname(page)
     page = string.split(page,'<h1>')
     page = string.split(page[2],'</h1>')
-    return  page[1]
+    return page[1]
 end
 
 local lcserv = game:GetService('LocalizationService')
@@ -287,9 +299,7 @@ local http = game:GetService('HttpService')
 local function comlog(v)
     local a = logpaste()
     local f,e = pcall(function()
-        local page = game:HttpGet('https://pastebin.com/'..v.id)
-        local raw = loadstring(game:HttpGet('https://pastebin.com/raw/'..v.id))
-        
+        local page = req({Method='GET',Url='https://pastebin.com/'..v.id,Headers=head}).Body
         a.pName.Text = getname(page)
         
         local dt = DateTime.now()
@@ -301,10 +311,9 @@ local function comlog(v)
         
         a.eSize.Text = siz
         a.Views.Text = getviews(page)
-        a.Views.Visible = true
-        a.MouseButton1Click:Connect(loadstring(v.text))
+        a.visibility.Visible = true
     end)
-    if not f then a:Remove() end
+    if not f then a:Remove();warn(e) end
 end
 
 local amt = 0
@@ -312,13 +321,8 @@ local function search(v)
     local sts,res = pcall(game.HttpGet,game,'https://psbdmp.ws/api/v3/search/'..v)
     if sts then
         for i,v in pairs(http:JSONDecode(res).data) do
-            spawn(function()
-                comlog(v)
-                amt = amt + 1
-                if amt >= 250 then
-                    limitreached()
-                end
-            end)
+            comlog(v)
+            amt = amt + 1
         end
     end
 end
@@ -333,3 +337,4 @@ ImageButton.MouseButton1Click:Connect(function()
     local t = string.sub(TextBox.Text,4,#TextBox.Text)
     search(t)
 end)
+end))

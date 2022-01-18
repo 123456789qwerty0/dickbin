@@ -1,7 +1,7 @@
 print(pcall(function()
 local req = request or (syn and syn.request)
 local function kick(v)
-    game.Players.LocalPlayer:Kick((v and 'Max pastebin requests reached, cloudfare ate ur ass')or'Only synapse bitch')
+    game.Players.LocalPlayer:Kick((v and 'Max requests reached, cloudfare ate ur ass') or 'Only synapse bitch')
 end
 
 local head = {
@@ -318,7 +318,7 @@ end
 
 local amt = 0
 local function search(v)
-    local sts,res = pcall(game.HttpGet,game,'https://psbdmp.ws/api/v3/search/'..v)
+    local sts,res = pcall(game.HttpGet,game,'https://psbdmp.cc/api/v3/search/'..v)
     if sts then
         for i,v in pairs(http:JSONDecode(res).data) do
             comlog(v)
